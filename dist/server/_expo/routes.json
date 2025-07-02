@@ -1,0 +1,61 @@
+{
+  "apiRoutes": [
+    {
+      "file": "_expo/functions/vision+api.js",
+      "page": "/vision",
+      "namedRegex": "^/vision(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "_expo/functions/recipes+api.js",
+      "page": "/recipes",
+      "namedRegex": "^/recipes(?:/)?$",
+      "routeKeys": {}
+    }
+  ],
+  "htmlRoutes": [
+    {
+      "file": "./(tabs)/index.tsx",
+      "page": "/(tabs)/index",
+      "namedRegex": "^(?:/\\(tabs\\))?(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/camera.tsx",
+      "page": "/(tabs)/camera",
+      "namedRegex": "^(?:/\\(tabs\\))?/camera(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/recipes.tsx",
+      "page": "/(tabs)/recipes",
+      "namedRegex": "^(?:/\\(tabs\\))?/recipes(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "./(tabs)/profile.tsx",
+      "page": "/(tabs)/profile",
+      "namedRegex": "^(?:/\\(tabs\\))?/profile(?:/)?$",
+      "routeKeys": {}
+    },
+    {
+      "file": "expo-router/build/views/Sitemap.js",
+      "page": "/_sitemap",
+      "namedRegex": "^/_sitemap(?:/)?$",
+      "routeKeys": {},
+      "generated": true
+    }
+  ],
+  "notFoundRoutes": [
+    {
+      "file": "./+not-found.tsx",
+      "page": "/+not-found",
+      "namedRegex": "^(?:/(?<notfound>.+?))?(?:/)?$",
+      "routeKeys": {
+        "notfound": "not-found"
+      }
+    }
+  ],
+  "redirects": [],
+  "rewrites": []
+}
