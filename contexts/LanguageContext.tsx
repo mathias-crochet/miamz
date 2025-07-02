@@ -94,6 +94,8 @@ const translations = {
   'profile.studyTip': '🎓 Cuisine Pause Étude',
   'profile.studyTip.text': 'Prends des pauses cuisine entre tes sessions d\'étude ! C\'est un excellent moyen de se détendre et de nourrir ton corps et ton esprit.',
   'profile.version': 'MIAMZ v1.0.0',
+  'profile.language': 'Langue',
+  'profile.language.desc': 'Français',
   
   // Common
   'common.loading': 'Chargement...',

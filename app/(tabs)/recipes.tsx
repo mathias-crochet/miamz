@@ -48,21 +48,21 @@ export default function RecipesScreen() {
   const recipes: Recipe[] = [
     {
       id: 1,
-      title: 'Quick Pasta Carbonara',
-      description: 'Creamy pasta with eggs, cheese, and bacon',
+      title: 'Pâtes Carbonara Rapides',
+      description: 'Pâtes crémeuses aux œufs, fromage et lardons',
       time: '15 min',
       servings: 2,
       difficulty: t('recipes.difficulty.easy'),
       rating: 4.8,
       category: 'Quick',
-      ingredients: ['200g pasta', '2 eggs', '100g parmesan cheese', '100g bacon', 'black pepper', 'salt'],
+      ingredients: ['200g de pâtes', '2 œufs', '100g de parmesan', '100g de lardons', 'poivre noir', 'sel'],
       instructions: [
-        'Boil pasta according to package directions',
-        'Cook bacon until crispy, reserve fat',
-        'Beat eggs with cheese and pepper',
-        'Drain pasta, mix with bacon fat',
-        'Add egg mixture off heat, toss quickly',
-        'Serve immediately with extra cheese'
+        'Faire bouillir les pâtes selon les instructions',
+        'Cuire les lardons jusqu\'à ce qu\'ils soient croustillants',
+        'Battre les œufs avec le fromage et le poivre',
+        'Égoutter les pâtes, mélanger avec la graisse des lardons',
+        'Ajouter le mélange d\'œufs hors du feu, mélanger rapidement',
+        'Servir immédiatement avec du fromage supplémentaire'
       ],
       nutrition: {
         calories: 520,
@@ -75,21 +75,21 @@ export default function RecipesScreen() {
     },
     {
       id: 2,
-      title: 'Veggie Stir Fry',
-      description: 'Colorful vegetables with soy sauce',
+      title: 'Sauté de Légumes',
+      description: 'Légumes colorés à la sauce soja',
       time: '12 min',
       servings: 3,
       difficulty: t('recipes.difficulty.easy'),
       rating: 4.6,
       category: 'Vegetarian',
-      ingredients: ['200g broccoli', '1 carrot', '1 bell pepper', '2 tbsp soy sauce', '1 tbsp oil', 'garlic'],
+      ingredients: ['200g de brocolis', '1 carotte', '1 poivron', '2 c. à soupe de sauce soja', '1 c. à soupe d\'huile', 'ail'],
       instructions: [
-        'Heat oil in a large pan or wok',
-        'Add garlic and cook for 30 seconds',
-        'Add harder vegetables first (carrots)',
-        'Add softer vegetables (broccoli, peppers)',
-        'Stir fry for 5-7 minutes until tender-crisp',
-        'Add soy sauce and toss to coat'
+        'Chauffer l\'huile dans une grande poêle ou wok',
+        'Ajouter l\'ail et cuire 30 secondes',
+        'Ajouter d\'abord les légumes plus durs (carottes)',
+        'Ajouter les légumes plus tendres (brocolis, poivrons)',
+        'Faire sauter 5-7 minutes jusqu\'à ce qu\'ils soient tendres-croquants',
+        'Ajouter la sauce soja et mélanger'
       ],
       nutrition: {
         calories: 180,
@@ -102,21 +102,21 @@ export default function RecipesScreen() {
     },
     {
       id: 3,
-      title: 'Avocado Toast',
-      description: 'Simple and nutritious breakfast',
+      title: 'Toast à l\'Avocat',
+      description: 'Petit-déjeuner simple et nutritif',
       time: '5 min',
       servings: 1,
       difficulty: t('recipes.difficulty.easy'),
       rating: 4.5,
       category: 'Breakfast',
-      ingredients: ['2 slices bread', '1 ripe avocado', '1 tomato', 'lemon juice', 'salt', 'pepper'],
+      ingredients: ['2 tranches de pain', '1 avocat mûr', '1 tomate', 'jus de citron', 'sel', 'poivre'],
       instructions: [
-        'Toast bread until golden brown',
-        'Mash avocado with lemon juice',
-        'Season with salt and pepper',
-        'Spread avocado on toast',
-        'Top with sliced tomato',
-        'Add final seasoning to taste'
+        'Griller le pain jusqu\'à ce qu\'il soit doré',
+        'Écraser l\'avocat avec le jus de citron',
+        'Assaisonner avec sel et poivre',
+        'Étaler l\'avocat sur le toast',
+        'Garnir de tranches de tomate',
+        'Ajouter l\'assaisonnement final au goût'
       ],
       nutrition: {
         calories: 320,
@@ -129,21 +129,21 @@ export default function RecipesScreen() {
     },
     {
       id: 4,
-      title: 'Chicken Rice Bowl',
-      description: 'Protein-packed meal with vegetables',
+      title: 'Bol de Riz au Poulet',
+      description: 'Repas riche en protéines avec légumes',
       time: '25 min',
       servings: 2,
       difficulty: t('recipes.difficulty.medium'),
       rating: 4.7,
       category: 'Lunch',
-      ingredients: ['300g chicken breast', '1 cup rice', '100g broccoli', '1 carrot', 'teriyaki sauce', 'sesame seeds'],
+      ingredients: ['300g de blanc de poulet', '1 tasse de riz', '100g de brocolis', '1 carotte', 'sauce teriyaki', 'graines de sésame'],
       instructions: [
-        'Cook rice according to package directions',
-        'Season and cook chicken until golden',
-        'Steam vegetables until tender',
-        'Slice chicken into strips',
-        'Assemble bowls with rice, chicken, vegetables',
-        'Drizzle with teriyaki sauce and sprinkle sesame seeds'
+        'Cuire le riz selon les instructions',
+        'Assaisonner et cuire le poulet jusqu\'à ce qu\'il soit doré',
+        'Cuire les légumes à la vapeur jusqu\'à ce qu\'ils soient tendres',
+        'Couper le poulet en lamelles',
+        'Assembler les bols avec riz, poulet, légumes',
+        'Arroser de sauce teriyaki et saupoudrer de graines de sésame'
       ],
       nutrition: {
         calories: 450,

@@ -4,7 +4,7 @@ export async function GET(request: Request) {
   
   if (!ingredients) {
     return new Response(
-      JSON.stringify({ error: 'No ingredients provided' }),
+      JSON.stringify({ error: 'Aucun ingrédient fourni' }),
       {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -12,8 +12,8 @@ export async function GET(request: Request) {
     );
   }
   
-  // In a real app, you would integrate with a recipe API like Spoonacular
-  // For now, we'll return mock data based on detected ingredients
+  // Dans une vraie application, vous intégreriez avec une API de recettes comme Spoonacular
+  // Pour l'instant, nous retournons des données fictives basées sur les ingrédients détectés
   const mockRecipes = generateMockRecipes(ingredients.split(','));
   
   return new Response(
@@ -33,18 +33,18 @@ function generateMockRecipes(ingredients: string[]): any[] {
   const recipeDatabase = [
     {
       id: 1,
-      title: 'Quick Tomato Pasta',
-      description: 'Simple pasta with fresh tomatoes and herbs',
+      title: 'Pâtes aux Tomates Rapides',
+      description: 'Pâtes simples aux tomates fraîches et herbes',
       time: '15 min',
       servings: 2,
-      difficulty: 'Easy',
+      difficulty: 'Facile',
       rating: 4.5,
-      ingredients: ['tomato', 'pasta', 'garlic', 'oil'],
+      ingredients: ['tomate', 'pâtes', 'ail', 'huile'],
       instructions: [
-        'Boil pasta according to package directions',
-        'Heat oil in a pan and sauté garlic',
-        'Add diced tomatoes and cook until soft',
-        'Toss with cooked pasta and serve'
+        'Faire bouillir les pâtes selon les instructions',
+        'Chauffer l\'huile et faire revenir l\'ail',
+        'Ajouter les tomates coupées et cuire jusqu\'à ce qu\'elles soient tendres',
+        'Mélanger avec les pâtes cuites et servir'
       ],
       nutrition: {
         calories: 320,
@@ -56,18 +56,18 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 2,
-      title: 'Fresh Garden Salad',
-      description: 'Crisp vegetables with a light dressing',
+      title: 'Salade de Jardin Fraîche',
+      description: 'Légumes croquants avec une vinaigrette légère',
       time: '10 min',
       servings: 1,
-      difficulty: 'Easy',
+      difficulty: 'Facile',
       rating: 4.3,
-      ingredients: ['lettuce', 'tomato', 'cucumber', 'carrot'],
+      ingredients: ['laitue', 'tomate', 'concombre', 'carotte'],
       instructions: [
-        'Wash and chop all vegetables',
-        'Mix in a large bowl',
-        'Add your favorite dressing',
-        'Serve immediately'
+        'Laver et couper tous les légumes',
+        'Mélanger dans un grand bol',
+        'Ajouter votre vinaigrette préférée',
+        'Servir immédiatement'
       ],
       nutrition: {
         calories: 120,
@@ -79,18 +79,18 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 3,
-      title: 'Cheesy Vegetable Omelet',
-      description: 'Fluffy eggs with cheese and vegetables',
+      title: 'Omelette aux Légumes et Fromage',
+      description: 'Œufs moelleux avec fromage et légumes',
       time: '12 min',
       servings: 1,
-      difficulty: 'Medium',
+      difficulty: 'Moyen',
       rating: 4.7,
-      ingredients: ['egg', 'cheese', 'vegetables', 'butter'],
+      ingredients: ['œuf', 'fromage', 'légumes', 'beurre'],
       instructions: [
-        'Beat eggs in a bowl',
-        'Heat butter in a non-stick pan',
-        'Pour eggs and let them set slightly',
-        'Add cheese and vegetables, fold omelet'
+        'Battre les œufs dans un bol',
+        'Chauffer le beurre dans une poêle antiadhésive',
+        'Verser les œufs et laisser prendre légèrement',
+        'Ajouter fromage et légumes, plier l\'omelette'
       ],
       nutrition: {
         calories: 280,
@@ -102,19 +102,19 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 4,
-      title: 'Chicken Stir Fry',
-      description: 'Protein-packed meal with colorful vegetables',
+      title: 'Sauté de Poulet aux Légumes',
+      description: 'Repas riche en protéines avec légumes colorés',
       time: '20 min',
       servings: 2,
-      difficulty: 'Medium',
+      difficulty: 'Moyen',
       rating: 4.6,
-      ingredients: ['chicken', 'vegetables', 'soy sauce', 'rice'],
+      ingredients: ['poulet', 'légumes', 'sauce soja', 'riz'],
       instructions: [
-        'Cut chicken into small pieces',
-        'Heat oil in a wok or large pan',
-        'Cook chicken until golden',
-        'Add vegetables and stir fry',
-        'Season with soy sauce and serve over rice'
+        'Couper le poulet en petits morceaux',
+        'Chauffer l\'huile dans un wok ou une grande poêle',
+        'Cuire le poulet jusqu\'à ce qu\'il soit doré',
+        'Ajouter les légumes et faire sauter',
+        'Assaisonner avec la sauce soja et servir sur du riz'
       ],
       nutrition: {
         calories: 420,
@@ -126,13 +126,13 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
   ];
   
-  // Filter recipes based on available ingredients
+  // Filtrer les recettes basées sur les ingrédients disponibles
   const availableIngredients = ingredients.map(ing => ing.trim().toLowerCase());
   
   const matchingRecipes = recipeDatabase.filter(recipe => {
     const recipeIngredients = recipe.ingredients.map(ing => ing.toLowerCase());
     
-    // Check if at least 50% of recipe ingredients are available
+    // Vérifier si au moins 50% des ingrédients de la recette sont disponibles
     const matchCount = recipeIngredients.filter(ing => 
       availableIngredients.some(available => 
         available.includes(ing) || ing.includes(available)
@@ -142,7 +142,7 @@ function generateMockRecipes(ingredients: string[]): any[] {
     return matchCount >= Math.ceil(recipeIngredients.length * 0.5);
   });
   
-  // Sort by number of matching ingredients (descending)
+  // Trier par nombre d'ingrédients correspondants (décroissant)
   return matchingRecipes.sort((a, b) => {
     const aMatches = a.ingredients.filter(ing => 
       availableIngredients.some(available => 

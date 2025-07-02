@@ -4,7 +4,7 @@ export async function POST(request: Request) {
     
     if (!image || !apiKey) {
       return new Response(
-        JSON.stringify({ error: 'Missing image or API key' }),
+        JSON.stringify({ error: 'Image ou clé API manquante' }),
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -12,14 +12,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Google Vision API endpoint
+    // Point de terminaison de l'API Google Vision
     const visionApiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
     
     const requestBody = {
       requests: [
         {
           image: {
-            content: image, // base64 encoded image
+            content: image, // image encodée en base64
           },
           features: [
             {
@@ -44,19 +44,19 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      throw new Error(`Vision API error: ${response.status}`);
+      throw new Error(`Erreur API Vision: ${response.status}`);
     }
 
     const visionData = await response.json();
     
-    // Extract food-related items
+    // Extraire les éléments liés à la nourriture
     const foodItems = extractFoodItems(visionData);
     
     return new Response(
       JSON.stringify({
         success: true,
         detectedItems: foodItems,
-        rawData: visionData, // For debugging
+        rawData: visionData, // Pour le débogage
       }),
       {
         status: 200,
@@ -64,12 +64,12 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    console.error('Vision API error:', error);
+    console.error('Erreur API Vision:', error);
     
     return new Response(
       JSON.stringify({
-        error: 'Failed to analyze image',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Échec de l\'analyse de l\'image',
+        details: error instanceof Error ? error.message : 'Erreur inconnue',
       }),
       {
         status: 500,
@@ -81,29 +81,29 @@ export async function POST(request: Request) {
 
 function extractFoodItems(visionData: any): string[] {
   const foodKeywords = [
-    'food', 'vegetable', 'fruit', 'meat', 'dairy', 'bread', 'cheese',
-    'tomato', 'lettuce', 'carrot', 'onion', 'potato', 'apple', 'banana',
-    'chicken', 'beef', 'fish', 'milk', 'egg', 'rice', 'pasta', 'broccoli',
-    'pepper', 'cucumber', 'spinach', 'mushroom', 'garlic', 'lemon', 'orange',
-    'strawberry', 'avocado', 'beans', 'corn', 'peas', 'nuts', 'yogurt',
-    'butter', 'oil', 'herbs', 'spices', 'sauce', 'condiment'
+    'nourriture', 'légume', 'fruit', 'viande', 'produit laitier', 'pain', 'fromage',
+    'tomate', 'laitue', 'carotte', 'oignon', 'pomme de terre', 'pomme', 'banane',
+    'poulet', 'bœuf', 'poisson', 'lait', 'œuf', 'riz', 'pâtes', 'brocoli',
+    'poivron', 'concombre', 'épinard', 'champignon', 'ail', 'citron', 'orange',
+    'fraise', 'avocat', 'haricots', 'maïs', 'petits pois', 'noix', 'yaourt',
+    'beurre', 'huile', 'herbes', 'épices', 'sauce', 'condiment'
   ];
   
   const detectedItems = new Set<string>();
   
-  // Process label detection results
+  // Traiter les résultats de détection d'étiquettes
   if (visionData.responses?.[0]?.labelAnnotations) {
     visionData.responses[0].labelAnnotations.forEach((label: any) => {
       const description = label.description.toLowerCase();
       
-      // Check if the label contains food-related keywords
+      // Vérifier si l'étiquette contient des mots-clés liés à la nourriture
       if (foodKeywords.some(keyword => description.includes(keyword))) {
         detectedItems.add(description);
       }
     });
   }
   
-  // Process object localization results
+  // Traiter les résultats de localisation d'objets
   if (visionData.responses?.[0]?.localizedObjectAnnotations) {
     visionData.responses[0].localizedObjectAnnotations.forEach((obj: any) => {
       const name = obj.name.toLowerCase();
