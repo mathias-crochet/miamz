@@ -1,41 +1,48 @@
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
-import { Chrome as Home, Camera, BookOpen, User } from 'lucide-react-native';
+import { House, Camera, BookOpen, User } from 'lucide-react-native';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function TabLayout() {
+  const { t } = useLanguage();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FF6B35',
+        tabBarActiveTintColor: '#2a8540',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#d5f3dc',
           borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
+          borderTopColor: '#2a8540',
           paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 32 : 8,
-          height: Platform.OS === 'ios' ? 88 : 64,
+          paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+          height: Platform.OS === 'ios' ? 88 : 80,
+          paddingHorizontal: 8,
         },
         tabBarLabelStyle: {
-          fontFamily: 'Inter-SemiBold',
           fontSize: 12,
           marginTop: 4,
+          marginBottom: Platform.OS === 'android' ? 8 : 0,
+        },
+        tabBarIconStyle: {
+          marginTop: Platform.OS === 'android' ? 4 : 0,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('nav.home'),
           tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} strokeWidth={2} />
+            <House size={size} color={color} strokeWidth={2} />
           ),
         }}
       />
       <Tabs.Screen
         name="camera"
         options={{
-          title: 'Scan',
+          title: t('nav.scan'),
           tabBarIcon: ({ size, color }) => (
             <Camera size={size} color={color} strokeWidth={2} />
           ),
@@ -44,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="recipes"
         options={{
-          title: 'Recipes',
+          title: t('nav.recipes'),
           tabBarIcon: ({ size, color }) => (
             <BookOpen size={size} color={color} strokeWidth={2} />
           ),
@@ -53,7 +60,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('nav.profile'),
           tabBarIcon: ({ size, color }) => (
             <User size={size} color={color} strokeWidth={2} />
           ),

@@ -3,41 +3,43 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, ChefHat, Clock, TrendingUp } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const quickActions = [
     {
       id: 1,
-      title: 'Scan Fridge',
-      description: 'Detect food items',
+      title: t('home.scanFridge'),
+      description: t('home.scanFridge.desc'),
       icon: Camera,
-      color: '#FF6B35',
+      color: '#2a8540',
       onPress: () => router.push('/camera'),
     },
     {
       id: 2,
-      title: 'Quick Recipes',
-      description: '5-minute meals',
+      title: t('home.quickRecipes'),
+      description: t('home.quickRecipes.desc'),
       icon: Clock,
       color: '#4ECDC4',
       onPress: () => router.push('/recipes'),
     },
     {
       id: 3,
-      title: 'Chef\'s Choice',
-      description: 'Popular recipes',
+      title: t('home.chefsChoice'),
+      description: t('home.chefsChoice.desc'),
       icon: ChefHat,
       color: '#45B7D1',
       onPress: () => router.push('/recipes'),
     },
     {
       id: 4,
-      title: 'Trending',
-      description: 'What\'s popular',
+      title: t('home.trending'),
+      description: t('home.trending.desc'),
       icon: TrendingUp,
       color: '#96CEB4',
       onPress: () => router.push('/recipes'),
@@ -49,20 +51,19 @@ export default function HomeScreen() {
       id: 1,
       title: 'Pasta Carbonara',
       time: '15 min',
-      difficulty: 'Easy',
+      difficulty: t('recipes.difficulty.easy'),
       image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 2,
       title: 'Chicken Stir Fry',
       time: '20 min',
-      difficulty: 'Medium',
+      difficulty: t('recipes.difficulty.medium'),
       image: 'https://images.pexels.com/photos/2741452/pexels-photo-2741452.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
   ];
 
   const handleRecipePress = (recipe: any) => {
-    // Navigate to recipes page with the specific recipe
     router.push('/recipes');
   };
 
@@ -71,20 +72,20 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <LinearGradient
-          colors={['#FF6B35', '#F7931E']}
+          colors={['#2a8540', '#1e6b32']}
           style={styles.header}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.headerContent}>
-            <Text style={styles.greeting}>Hello, Student! 👋</Text>
-            <Text style={styles.subtitle}>What's cooking today?</Text>
+            <Text style={styles.greeting}>{t('home.greeting')}</Text>
+            <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
           </View>
         </LinearGradient>
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <Text style={styles.sectionTitle}>{t('home.quickActions')}</Text>
           <View style={styles.actionsGrid}>
             {quickActions.map((action) => (
               <TouchableOpacity
@@ -105,7 +106,7 @@ export default function HomeScreen() {
 
         {/* Recent Recipes */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Recipes</Text>
+          <Text style={styles.sectionTitle}>{t('home.recentRecipes')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {recentRecipes.map((recipe) => (
               <TouchableOpacity 
@@ -115,7 +116,7 @@ export default function HomeScreen() {
                 onPress={() => handleRecipePress(recipe)}
               >
                 <LinearGradient
-                  colors={['#4ECDC4', '#44A08D']}
+                  colors={['#2a8540', '#1e6b32']}
                   style={styles.recipeImage}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -135,11 +136,11 @@ export default function HomeScreen() {
 
         {/* Tips Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Student Tips</Text>
+          <Text style={styles.sectionTitle}>{t('home.studentTips')}</Text>
           <View style={styles.tipCard}>
-            <Text style={styles.tipTitle}>💡 Pro Tip</Text>
+            <Text style={styles.tipTitle}>{t('home.proTip')}</Text>
             <Text style={styles.tipText}>
-              Take a photo of your fridge contents to get personalized recipe suggestions based on what you have!
+              {t('home.tipText')}
             </Text>
           </View>
         </View>
@@ -151,7 +152,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
   },
   header: {
     paddingHorizontal: 24,
@@ -163,13 +164,11 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 28,
-    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     opacity: 0.9,
   },
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     marginBottom: 16,
   },
@@ -214,13 +212,11 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 4,
   },
   actionDescription: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     textAlign: 'center',
   },
@@ -241,7 +237,6 @@ const styles = StyleSheet.create({
   },
   recipeTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#FFFFFF',
     marginBottom: 4,
   },
@@ -251,13 +246,11 @@ const styles = StyleSheet.create({
   },
   recipeTime: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     opacity: 0.8,
   },
   recipeDifficulty: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     opacity: 0.8,
   },
@@ -276,13 +269,11 @@ const styles = StyleSheet.create({
   },
   tipTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 8,
   },
   tipText: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     lineHeight: 20,
   },

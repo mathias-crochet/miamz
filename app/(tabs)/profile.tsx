@@ -1,45 +1,40 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, Settings, Bell, Heart, ShoppingCart, CircleHelp as HelpCircle, LogOut, ChevronRight, Globe } from 'lucide-react-native';
+import { User, Settings, Bell, Heart, ShoppingCart, CircleHelp as HelpCircle, LogOut, ChevronRight } from 'lucide-react-native';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { t } = useLanguage();
 
   const menuItems = [
     {
       id: 1,
-      title: 'Saved Recipes',
-      subtitle: '12 recipes saved',
+      title: t('profile.savedRecipes'),
+      subtitle: t('profile.savedRecipes.desc'),
       icon: Heart,
       onPress: () => console.log('Saved recipes'),
     },
     {
       id: 2,
-      title: 'Shopping List',
-      subtitle: 'Manage your ingredients',
+      title: t('profile.shoppingList'),
+      subtitle: t('profile.shoppingList.desc'),
       icon: ShoppingCart,
       onPress: () => console.log('Shopping list'),
     },
     {
       id: 3,
-      title: 'Dietary Preferences',
-      subtitle: 'Vegetarian, Gluten-free',
+      title: t('profile.dietary'),
+      subtitle: t('profile.dietary.desc'),
       icon: Settings,
       onPress: () => console.log('Dietary preferences'),
     },
     {
       id: 4,
-      title: 'Language',
-      subtitle: 'English',
-      icon: Globe,
-      onPress: () => console.log('Language'),
-    },
-    {
-      id: 5,
-      title: 'Help & Support',
-      subtitle: 'FAQs, Contact us',
+      title: t('profile.help'),
+      subtitle: t('profile.help.desc'),
       icon: HelpCircle,
       onPress: () => console.log('Help & Support'),
     },
@@ -47,17 +42,17 @@ export default function ProfileScreen() {
 
   const stats = [
     {
-      label: 'Recipes Tried',
+      label: t('profile.stats.tried'),
       value: '23',
-      color: '#FF6B35',
+      color: '#2a8540',
     },
     {
-      label: 'Favorites',
+      label: t('profile.stats.favorites'),
       value: '12',
       color: '#4ECDC4',
     },
     {
-      label: 'Ingredients Scanned',
+      label: t('profile.stats.scanned'),
       value: '89',
       color: '#45B7D1',
     },
@@ -68,7 +63,7 @@ export default function ProfileScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
         <LinearGradient
-          colors={['#FF6B35', '#F7931E']}
+          colors={['#2a8540', '#1e6b32']}
           style={styles.profileHeader}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -77,8 +72,8 @@ export default function ProfileScreen() {
             <View style={styles.avatarContainer}>
               <User size={32} color="#FFFFFF" strokeWidth={2} />
             </View>
-            <Text style={styles.userName}>Student Chef</Text>
-            <Text style={styles.userEmail}>student@university.edu</Text>
+            <Text style={styles.userName}>{t('profile.name')}</Text>
+            <Text style={styles.userEmail}>{t('profile.email')}</Text>
           </View>
         </LinearGradient>
 
@@ -94,7 +89,7 @@ export default function ProfileScreen() {
 
         {/* Settings Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
+          <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
           
           {/* Notifications Toggle */}
           <View style={styles.settingItem}>
@@ -103,14 +98,14 @@ export default function ProfileScreen() {
                 <Bell size={20} color="#FFFFFF" strokeWidth={2} />
               </View>
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Notifications</Text>
-                <Text style={styles.settingSubtitle}>Recipe alerts & reminders</Text>
+                <Text style={styles.settingTitle}>{t('profile.notifications')}</Text>
+                <Text style={styles.settingSubtitle}>{t('profile.notifications.desc')}</Text>
               </View>
             </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#E5E7EB', true: '#FF6B35' }}
+              trackColor={{ false: '#E5E7EB', true: '#2a8540' }}
               thumbColor={notificationsEnabled ? '#FFFFFF' : '#BDC3C7'}
             />
           </View>
@@ -118,7 +113,7 @@ export default function ProfileScreen() {
 
         {/* Menu Items */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
+          <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
           
           {menuItems.map((item) => (
             <TouchableOpacity key={item.id} style={styles.menuItem} onPress={item.onPress}>
@@ -138,11 +133,11 @@ export default function ProfileScreen() {
 
         {/* Student Tips */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Student Tips</Text>
+          <Text style={styles.sectionTitle}>{t('profile.studentTips')}</Text>
           <View style={styles.tipCard}>
-            <Text style={styles.tipTitle}>🎓 Study Break Cooking</Text>
+            <Text style={styles.tipTitle}>{t('profile.studyTip')}</Text>
             <Text style={styles.tipText}>
-              Take cooking breaks between study sessions! It's a great way to relax and nourish your body and mind.
+              {t('profile.studyTip.text')}
             </Text>
           </View>
         </View>
@@ -150,11 +145,11 @@ export default function ProfileScreen() {
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton}>
           <LogOut size={20} color="#E74C3C" strokeWidth={2} />
-          <Text style={styles.logoutText}>Sign Out</Text>
+          <Text style={styles.logoutText}>{t('profile.signOut')}</Text>
         </TouchableOpacity>
 
         {/* App Version */}
-        <Text style={styles.versionText}>MIAMZ v1.0.0</Text>
+        <Text style={styles.versionText}>{t('profile.version')}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -163,7 +158,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
   },
   profileHeader: {
     paddingHorizontal: 24,
@@ -184,13 +179,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     opacity: 0.8,
   },
@@ -218,12 +211,10 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     textAlign: 'center',
   },
@@ -233,7 +224,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     marginBottom: 16,
   },
@@ -272,13 +262,11 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 2,
   },
   settingSubtitle: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
   },
   menuItem: {
@@ -316,13 +304,11 @@ const styles = StyleSheet.create({
   },
   menuTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 2,
   },
   menuSubtitle: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
   },
   tipCard: {
@@ -340,13 +326,11 @@ const styles = StyleSheet.create({
   },
   tipTitle: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 8,
   },
   tipText: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     lineHeight: 20,
   },
@@ -364,13 +348,11 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#E74C3C',
     marginLeft: 8,
   },
   versionText: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#BDC3C7',
     textAlign: 'center',
     marginBottom: 24,

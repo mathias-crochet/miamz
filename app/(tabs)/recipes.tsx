@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Dimens
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Search, Clock, Users, Star, Bookmark, Filter, X, ChefHat } from 'lucide-react-native';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -32,8 +33,17 @@ export default function RecipesScreen() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useLanguage();
 
-  const categories = ['All', 'Quick', 'Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Vegetarian'];
+  const categories = [
+    { key: 'All', label: t('recipes.categories.all') },
+    { key: 'Quick', label: t('recipes.categories.quick') },
+    { key: 'Breakfast', label: t('recipes.categories.breakfast') },
+    { key: 'Lunch', label: t('recipes.categories.lunch') },
+    { key: 'Dinner', label: t('recipes.categories.dinner') },
+    { key: 'Snacks', label: t('recipes.categories.snacks') },
+    { key: 'Vegetarian', label: t('recipes.categories.vegetarian') },
+  ];
 
   const recipes: Recipe[] = [
     {
@@ -42,7 +52,7 @@ export default function RecipesScreen() {
       description: 'Creamy pasta with eggs, cheese, and bacon',
       time: '15 min',
       servings: 2,
-      difficulty: 'Easy',
+      difficulty: t('recipes.difficulty.easy'),
       rating: 4.8,
       category: 'Quick',
       ingredients: ['200g pasta', '2 eggs', '100g parmesan cheese', '100g bacon', 'black pepper', 'salt'],
@@ -69,7 +79,7 @@ export default function RecipesScreen() {
       description: 'Colorful vegetables with soy sauce',
       time: '12 min',
       servings: 3,
-      difficulty: 'Easy',
+      difficulty: t('recipes.difficulty.easy'),
       rating: 4.6,
       category: 'Vegetarian',
       ingredients: ['200g broccoli', '1 carrot', '1 bell pepper', '2 tbsp soy sauce', '1 tbsp oil', 'garlic'],
@@ -96,7 +106,7 @@ export default function RecipesScreen() {
       description: 'Simple and nutritious breakfast',
       time: '5 min',
       servings: 1,
-      difficulty: 'Easy',
+      difficulty: t('recipes.difficulty.easy'),
       rating: 4.5,
       category: 'Breakfast',
       ingredients: ['2 slices bread', '1 ripe avocado', '1 tomato', 'lemon juice', 'salt', 'pepper'],
@@ -123,7 +133,7 @@ export default function RecipesScreen() {
       description: 'Protein-packed meal with vegetables',
       time: '25 min',
       servings: 2,
-      difficulty: 'Medium',
+      difficulty: t('recipes.difficulty.medium'),
       rating: 4.7,
       category: 'Lunch',
       ingredients: ['300g chicken breast', '1 cup rice', '100g broccoli', '1 carrot', 'teriyaki sauce', 'sesame seeds'],
@@ -156,7 +166,6 @@ export default function RecipesScreen() {
   });
 
   const toggleBookmark = (recipeId: number) => {
-    // In a real app, this would update the backend
     console.log('Toggle bookmark for recipe:', recipeId);
   };
 
@@ -174,8 +183,8 @@ export default function RecipesScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Recipe Collection</Text>
-        <Text style={styles.headerSubtitle}>Delicious meals made simple</Text>
+        <Text style={styles.headerTitle}>{t('recipes.title')}</Text>
+        <Text style={styles.headerSubtitle}>{t('recipes.subtitle')}</Text>
       </View>
 
       {/* Search Bar */}
@@ -184,14 +193,14 @@ export default function RecipesScreen() {
           <Search size={20} color="#7F8C8D" strokeWidth={2} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search recipes or ingredients..."
+            placeholder={t('recipes.search')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#BDC3C7"
           />
         </View>
         <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#FF6B35" strokeWidth={2} />
+          <Filter size={20} color="#2a8540" strokeWidth={2} />
         </TouchableOpacity>
       </View>
 
@@ -199,18 +208,18 @@ export default function RecipesScreen() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
         {categories.map((category) => (
           <TouchableOpacity
-            key={category}
+            key={category.key}
             style={[
               styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonActive
+              selectedCategory === category.key && styles.categoryButtonActive
             ]}
-            onPress={() => setSelectedCategory(category)}
+            onPress={() => setSelectedCategory(category.key)}
           >
             <Text style={[
               styles.categoryText,
-              selectedCategory === category && styles.categoryTextActive
+              selectedCategory === category.key && styles.categoryTextActive
             ]}>
-              {category}
+              {category.label}
             </Text>
           </TouchableOpacity>
         ))}
@@ -226,7 +235,7 @@ export default function RecipesScreen() {
             onPress={() => openRecipeModal(recipe)}
           >
             <LinearGradient
-              colors={['#4ECDC4', '#44A08D']}
+              colors={['#2a8540', '#1e6b32']}
               style={styles.recipeImageContainer}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -237,8 +246,8 @@ export default function RecipesScreen() {
               >
                 <Bookmark
                   size={20}
-                  color={recipe.isBookmarked ? '#FF6B35' : '#FFFFFF'}
-                  fill={recipe.isBookmarked ? '#FF6B35' : 'transparent'}
+                  color={recipe.isBookmarked ? '#2a8540' : '#FFFFFF'}
+                  fill={recipe.isBookmarked ? '#2a8540' : 'transparent'}
                   strokeWidth={2}
                 />
               </TouchableOpacity>
@@ -267,16 +276,16 @@ export default function RecipesScreen() {
                   </View>
                 </View>
                 <View style={[styles.difficultyBadge, 
-                  recipe.difficulty === 'Easy' && styles.difficultyEasy,
-                  recipe.difficulty === 'Medium' && styles.difficultyMedium,
-                  recipe.difficulty === 'Hard' && styles.difficultyHard
+                  recipe.difficulty === t('recipes.difficulty.easy') && styles.difficultyEasy,
+                  recipe.difficulty === t('recipes.difficulty.medium') && styles.difficultyMedium,
+                  recipe.difficulty === t('recipes.difficulty.hard') && styles.difficultyHard
                 ]}>
                   <Text style={styles.difficultyText}>{recipe.difficulty}</Text>
                 </View>
               </View>
 
               <View style={styles.ingredientsContainer}>
-                <Text style={styles.ingredientsLabel}>Ingredients:</Text>
+                <Text style={styles.ingredientsLabel}>{t('recipes.ingredients')}:</Text>
                 <Text style={styles.ingredientsList}>
                   {recipe.ingredients.slice(0, 3).join(', ')}
                   {recipe.ingredients.length > 3 && '...'}
@@ -288,9 +297,9 @@ export default function RecipesScreen() {
 
         {filteredRecipes.length === 0 && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>No recipes found</Text>
+            <Text style={styles.emptyStateText}>{t('recipes.noResults')}</Text>
             <Text style={styles.emptyStateSubtext}>
-              Try adjusting your search or category filter
+              {t('recipes.noResults.subtitle')}
             </Text>
           </View>
         )}
@@ -332,45 +341,45 @@ export default function RecipesScreen() {
                   {/* Recipe Stats */}
                   <View style={styles.modalStats}>
                     <View style={styles.modalStatItem}>
-                      <Clock size={16} color="#FF6B35" strokeWidth={2} />
+                      <Clock size={16} color="#2a8540" strokeWidth={2} />
                       <Text style={styles.modalStatText}>{selectedRecipe.time}</Text>
                     </View>
                     <View style={styles.modalStatItem}>
-                      <Users size={16} color="#FF6B35" strokeWidth={2} />
-                      <Text style={styles.modalStatText}>{selectedRecipe.servings} servings</Text>
+                      <Users size={16} color="#2a8540" strokeWidth={2} />
+                      <Text style={styles.modalStatText}>{selectedRecipe.servings} {t('recipes.servings')}</Text>
                     </View>
                     <View style={styles.modalStatItem}>
-                      <ChefHat size={16} color="#FF6B35" strokeWidth={2} />
+                      <ChefHat size={16} color="#2a8540" strokeWidth={2} />
                       <Text style={styles.modalStatText}>{selectedRecipe.difficulty}</Text>
                     </View>
                   </View>
 
                   {/* Nutrition Info */}
                   <View style={styles.nutritionSection}>
-                    <Text style={styles.sectionTitle}>Nutrition (per serving)</Text>
+                    <Text style={styles.sectionTitle}>{t('recipes.nutrition')}</Text>
                     <View style={styles.nutritionGrid}>
                       <View style={styles.nutritionItem}>
                         <Text style={styles.nutritionValue}>{selectedRecipe.nutrition.calories}</Text>
-                        <Text style={styles.nutritionLabel}>Calories</Text>
+                        <Text style={styles.nutritionLabel}>{t('recipes.nutrition.calories')}</Text>
                       </View>
                       <View style={styles.nutritionItem}>
                         <Text style={styles.nutritionValue}>{selectedRecipe.nutrition.protein}g</Text>
-                        <Text style={styles.nutritionLabel}>Protein</Text>
+                        <Text style={styles.nutritionLabel}>{t('recipes.nutrition.protein')}</Text>
                       </View>
                       <View style={styles.nutritionItem}>
                         <Text style={styles.nutritionValue}>{selectedRecipe.nutrition.carbs}g</Text>
-                        <Text style={styles.nutritionLabel}>Carbs</Text>
+                        <Text style={styles.nutritionLabel}>{t('recipes.nutrition.carbs')}</Text>
                       </View>
                       <View style={styles.nutritionItem}>
                         <Text style={styles.nutritionValue}>{selectedRecipe.nutrition.fat}g</Text>
-                        <Text style={styles.nutritionLabel}>Fat</Text>
+                        <Text style={styles.nutritionLabel}>{t('recipes.nutrition.fat')}</Text>
                       </View>
                     </View>
                   </View>
 
                   {/* Ingredients */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Ingredients</Text>
+                    <Text style={styles.sectionTitle}>{t('recipes.ingredients')}</Text>
                     {selectedRecipe.ingredients.map((ingredient, index) => (
                       <View key={index} style={styles.ingredientItem}>
                         <Text style={styles.ingredientBullet}>•</Text>
@@ -381,7 +390,7 @@ export default function RecipesScreen() {
 
                   {/* Instructions */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Instructions</Text>
+                    <Text style={styles.sectionTitle}>{t('recipes.instructions')}</Text>
                     {selectedRecipe.instructions.map((instruction, index) => (
                       <View key={index} style={styles.instructionItem}>
                         <View style={styles.instructionNumber}>
@@ -404,7 +413,7 @@ export default function RecipesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
   },
   header: {
     paddingHorizontal: 24,
@@ -412,13 +421,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
   },
   searchContainer: {
@@ -447,7 +454,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#2C3E50',
     marginLeft: 12,
   },
@@ -484,12 +490,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   categoryButtonActive: {
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
+    backgroundColor: '#2a8540',
+    borderColor: '#2a8540',
   },
   categoryText: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
     color: '#7F8C8D',
   },
   categoryTextActive: {
@@ -522,7 +527,7 @@ const styles = StyleSheet.create({
   bookmarkButton: {
     width: 36,
     height: 36,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
@@ -538,7 +543,6 @@ const styles = StyleSheet.create({
   },
   recipeTitle: {
     fontSize: 18,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     flex: 1,
     marginRight: 12,
@@ -549,13 +553,11 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
     color: '#F39C12',
     marginLeft: 4,
   },
   recipeDescription: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     lineHeight: 20,
     marginBottom: 16,
@@ -576,7 +578,6 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     marginLeft: 6,
   },
@@ -596,7 +597,6 @@ const styles = StyleSheet.create({
   },
   difficultyText: {
     fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
   },
   ingredientsContainer: {
@@ -606,13 +606,11 @@ const styles = StyleSheet.create({
   },
   ingredientsLabel: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 4,
   },
   ingredientsList: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     lineHeight: 18,
   },
@@ -622,13 +620,11 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginBottom: 8,
   },
   emptyStateSubtext: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     textAlign: 'center',
   },
@@ -674,7 +670,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     flex: 1,
     marginRight: 16,
@@ -685,13 +680,11 @@ const styles = StyleSheet.create({
   },
   modalRatingText: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#F39C12',
     marginLeft: 4,
   },
   modalDescription: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     lineHeight: 22,
     marginBottom: 20,
@@ -709,7 +702,6 @@ const styles = StyleSheet.create({
   },
   modalStatText: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
     color: '#2C3E50',
     marginTop: 4,
   },
@@ -722,7 +714,7 @@ const styles = StyleSheet.create({
   },
   nutritionItem: {
     alignItems: 'center',
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
     borderRadius: 8,
     padding: 12,
     flex: 1,
@@ -730,12 +722,10 @@ const styles = StyleSheet.create({
   },
   nutritionValue: {
     fontSize: 18,
-    fontFamily: 'Inter-Bold',
-    color: '#FF6B35',
+    color: '#2a8540',
   },
   nutritionLabel: {
     fontSize: 12,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     marginTop: 2,
   },
@@ -744,7 +734,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     marginBottom: 12,
   },
@@ -755,14 +744,12 @@ const styles = StyleSheet.create({
   },
   ingredientBullet: {
     fontSize: 16,
-    fontFamily: 'Inter-Bold',
-    color: '#FF6B35',
+    color: '#2a8540',
     marginRight: 12,
     marginTop: 2,
   },
   ingredientText: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#2C3E50',
     flex: 1,
     lineHeight: 22,
@@ -776,7 +763,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#2a8540',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -784,12 +771,10 @@ const styles = StyleSheet.create({
   },
   instructionNumberText: {
     fontSize: 14,
-    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
   },
   instructionText: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#2C3E50',
     flex: 1,
     lineHeight: 22,

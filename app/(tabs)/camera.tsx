@@ -4,6 +4,7 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, RotateCcw, Zap, ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -11,13 +12,14 @@ export default function CameraScreen() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const cameraRef = useRef<CameraView>(null);
   const router = useRouter();
+  const { t } = useLanguage();
 
   if (!permission) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B35" />
-          <Text style={styles.loadingText}>Loading camera...</Text>
+          <ActivityIndicator size="large" color="#2a8540" />
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -27,13 +29,13 @@ export default function CameraScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Camera size={64} color="#FF6B35" strokeWidth={2} />
-          <Text style={styles.permissionTitle}>Camera Access Required</Text>
+          <Camera size={64} color="#2a8540" strokeWidth={2} />
+          <Text style={styles.permissionTitle}>{t('camera.permission.title')}</Text>
           <Text style={styles.permissionText}>
-            MIAMZ needs camera access to detect food items in your fridge and suggest recipes.
+            {t('camera.permission.text')}
           </Text>
           <TouchableOpacity style={styles.permissionButton} onPress={requestPermission}>
-            <Text style={styles.permissionButtonText}>Grant Permission</Text>
+            <Text style={styles.permissionButtonText}>{t('camera.permission.grant')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -49,29 +51,26 @@ export default function CameraScreen() {
       setIsAnalyzing(true);
       
       try {
-        // In a real app, you would take the photo and send it to Google Vision API
-        // For now, we'll simulate the process
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Simulate detected items
         const detectedItems = ['tomatoes', 'lettuce', 'cheese', 'bread'];
         
         Alert.alert(
-          'Food Items Detected! 🍅',
-          `Found: ${detectedItems.join(', ')}\n\nWould you like to see recipe suggestions?`,
+          t('camera.detected.title'),
+          `${t('camera.detected.found')}: ${detectedItems.join(', ')}\n\n${t('camera.detected.question')}`,
           [
             {
-              text: 'Later',
+              text: t('camera.detected.later'),
               style: 'cancel',
             },
             {
-              text: 'Show Recipes',
+              text: t('camera.detected.showRecipes'),
               onPress: () => router.push('/recipes'),
             },
           ]
         );
       } catch (error) {
-        Alert.alert('Error', 'Failed to analyze image. Please try again.');
+        Alert.alert(t('common.error'), t('camera.error'));
       } finally {
         setIsAnalyzing(false);
       }
@@ -85,7 +84,7 @@ export default function CameraScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <ArrowLeft size={24} color="#FFFFFF" strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Scan Your Fridge</Text>
+        <Text style={styles.headerTitle}>{t('camera.title')}</Text>
         <TouchableOpacity onPress={toggleCameraFacing} style={styles.flipButton}>
           <RotateCcw size={24} color="#FFFFFF" strokeWidth={2} />
         </TouchableOpacity>
@@ -102,7 +101,7 @@ export default function CameraScreen() {
           <View style={styles.overlay}>
             <View style={styles.guideFrame} />
             <Text style={styles.guideText}>
-              Position your fridge contents within the frame
+              {t('camera.guide')}
             </Text>
           </View>
         </CameraView>
@@ -121,12 +120,12 @@ export default function CameraScreen() {
             {isAnalyzing ? (
               <>
                 <ActivityIndicator size="small" color="#FFFFFF" />
-                <Text style={styles.captureButtonText}>Analyzing...</Text>
+                <Text style={styles.captureButtonText}>{t('camera.analyzing')}</Text>
               </>
             ) : (
               <>
                 <Zap size={24} color="#FFFFFF" strokeWidth={2} />
-                <Text style={styles.captureButtonText}>Scan Food</Text>
+                <Text style={styles.captureButtonText}>{t('camera.scanFood')}</Text>
               </>
             )}
           </TouchableOpacity>
@@ -135,7 +134,7 @@ export default function CameraScreen() {
         </View>
 
         <Text style={styles.tip}>
-          💡 Tip: Good lighting helps detect food items better
+          {t('camera.tip')}
         </Text>
       </View>
     </SafeAreaView>
@@ -151,11 +150,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
   },
   loadingText: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#2C3E50',
     marginTop: 16,
   },
@@ -163,12 +161,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF8E7',
+    backgroundColor: '#d5f3dc',
     paddingHorizontal: 32,
   },
   permissionTitle: {
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
     color: '#2C3E50',
     textAlign: 'center',
     marginTop: 24,
@@ -176,21 +173,19 @@ const styles = StyleSheet.create({
   },
   permissionText: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#7F8C8D',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 32,
   },
   permissionButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#2a8540',
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 12,
   },
   permissionButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#FFFFFF',
   },
   header: {
@@ -211,7 +206,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
     color: '#FFFFFF',
   },
   flipButton: {
@@ -238,13 +232,12 @@ const styles = StyleSheet.create({
     width: 280,
     height: 200,
     borderWidth: 2,
-    borderColor: '#FF6B35',
+    borderColor: '#2a8540',
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+    backgroundColor: 'rgba(42, 133, 64, 0.1)',
   },
   guideText: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     textAlign: 'center',
     marginTop: 20,
@@ -265,7 +258,7 @@ const styles = StyleSheet.create({
     width: 60,
   },
   captureButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#2a8540',
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 25,
@@ -279,13 +272,11 @@ const styles = StyleSheet.create({
   },
   captureButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
     color: '#FFFFFF',
     marginLeft: 8,
   },
   tip: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
     color: '#FFFFFF',
     textAlign: 'center',
     opacity: 0.7,
