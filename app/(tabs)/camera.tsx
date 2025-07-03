@@ -53,7 +53,7 @@ export default function CameraScreen() {
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        const detectedItems = ['tomatoes', 'lettuce', 'cheese', 'bread'];
+        const detectedItems = ['pates', 'lardons', 'parmesan', 'carottes', 'poivrons', 'pain', 'avocat', 'riz', 'blanc de poulet', 'oeufs', 'tomates', 'citron', 'graines de sésame'];
         
         Alert.alert(
           t('camera.detected.title'),

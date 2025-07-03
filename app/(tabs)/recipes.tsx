@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Search, Clock, Users, Star, Bookmark, Filter, X, ChefHat } from 'lucide-react-native';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ImageSourcePropType } from 'react-native';
+
 
 const { width } = Dimensions.get('window');
 
@@ -24,7 +26,7 @@ interface Recipe {
     carbs: number;
     fat: number;
   };
-  image: string;
+  image: ImageSourcePropType;
   isBookmarked: boolean;
 }
 
@@ -70,7 +72,7 @@ export default function RecipesScreen() {
         carbs: 45,
         fat: 24
       },
-      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: require('@/assets/images/dish-food-produce-vegetable-cuisine-pasta-138925-pxhere.com.jpg'),
       isBookmarked: true,
     },
     {
@@ -97,7 +99,7 @@ export default function RecipesScreen() {
         carbs: 25,
         fat: 6
       },
-      image: 'https://images.pexels.com/photos/2741452/pexels-photo-2741452.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: require('@/assets/images/pexels-photo-7515373.jpeg'),
       isBookmarked: false,
     },
     {
@@ -124,7 +126,7 @@ export default function RecipesScreen() {
         carbs: 35,
         fat: 18
       },
-      image: 'https://images.pexels.com/photos/566566/pexels-photo-566566.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: require('@/assets/images/dish-food-cuisine-ingredient-avocado-salad-1610966-pxhere.com.jpg'),
       isBookmarked: false,
     },
     {
@@ -151,7 +153,7 @@ export default function RecipesScreen() {
         carbs: 48,
         fat: 12
       },
-      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: require('@/assets/images/chicken-teriyaki-mit-reis.jpeg.webp'),
       isBookmarked: true,
     },
   ];
@@ -234,14 +236,19 @@ export default function RecipesScreen() {
             activeOpacity={0.8}
             onPress={() => openRecipeModal(recipe)}
           >
-            <LinearGradient
-              colors={['#2a8540', '#1e6b32']}
-              style={styles.recipeImageContainer}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
+            <View style={styles.recipeImageContainer}>
+              <Image
+                source={recipe.image}
+                style={{ width: '100%', height: 120, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+                resizeMode="cover"
+              />
+              <View style={{
+                ...StyleSheet.absoluteFillObject,
+                backgroundColor: 'rgba(0,0,0,0.15)',
+                borderRadius: 16,
+              }} />
               <TouchableOpacity
-                style={styles.bookmarkButton}
+                style={[styles.bookmarkButton, { position: 'absolute', top: 12, right: 12 }]}
                 onPress={() => toggleBookmark(recipe.id)}
               >
                 <Bookmark
@@ -251,7 +258,7 @@ export default function RecipesScreen() {
                   strokeWidth={2}
                 />
               </TouchableOpacity>
-            </LinearGradient>
+            </View>
 
             <View style={styles.recipeContent}>
               <View style={styles.recipeHeader}>
@@ -324,7 +331,7 @@ export default function RecipesScreen() {
                 </View>
 
                 {/* Recipe Image */}
-                <Image source={{ uri: selectedRecipe.image }} style={styles.modalImage} />
+                <Image source={selectedRecipe.image} style={styles.modalImage} />
 
                 {/* Recipe Info */}
                 <View style={styles.modalBody}>
@@ -519,10 +526,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   recipeImageContainer: {
+    width: '100%',
     height: 120,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    overflow: 'hidden',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    padding: 12,
+    position: 'relative',
   },
   bookmarkButton: {
     width: 36,

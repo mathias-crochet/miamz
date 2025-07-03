@@ -1,50 +1,50 @@
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const ingredients = url.searchParams.get('ingredients');
-  
-  if (!ingredients) {
-    return new Response(
-      JSON.stringify({ error: 'Aucun ingrédient fourni' }),
-      {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
+import { useState } from 'react';
+import axios from 'axios';
+
+export default function Home() {
+  const [keyword, setKeyword] = useState<string | null>(null);
+  const [diet, setDiet] = useState<string | null>(null);
+  const [exclude, setExclude] = useState<string | null>(null);
+  const [response, setResponse] = useState<any>(null);
+  const [loading, setLoading] = useState(false); // <-- Ajouté
+
+  // Gets the recipes matching the input term
+  const getRecipes = async () => {
+    try {
+      const dietParam = diet === 'none' ? '' : diet;
+      setLoading(true);
+      const res = await axios.get('/api/search', {
+        params: { keyword, diet: dietParam, exclude }
+      });
+      const { data } = res;
+      if (typeof data === 'object' && data !== null && 'results' in data) {
+        setResponse((data as { results: any }).results);
+      } else {
+        setResponse(null);
       }
-    );
-  }
-  
-  // Dans une vraie application, vous intégreriez avec une API de recettes comme Spoonacular
-  // Pour l'instant, nous retournons des données fictives basées sur les ingrédients détectés
-  const mockRecipes = generateMockRecipes(ingredients.split(','));
-  
-  return new Response(
-    JSON.stringify({
-      success: true,
-      recipes: mockRecipes,
-      totalResults: mockRecipes.length,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false); // <-- Ajouté pour arrêter le loading
     }
-  );
-}
+  };
 
 function generateMockRecipes(ingredients: string[]): any[] {
   const recipeDatabase = [
     {
       id: 1,
-      title: 'Pâtes aux Tomates Rapides',
-      description: 'Pâtes simples aux tomates fraîches et herbes',
+      title: 'Quick Tomato Pasta',
+      description: 'Simple pasta with fresh tomatoes and herbs',
       time: '15 min',
       servings: 2,
-      difficulty: 'Facile',
+      difficulty: 'Easy',
       rating: 4.5,
-      ingredients: ['tomate', 'pâtes', 'ail', 'huile'],
+      ingredients: ['tomato', 'pasta', 'garlic', 'oil'],
       instructions: [
-        'Faire bouillir les pâtes selon les instructions',
-        'Chauffer l\'huile et faire revenir l\'ail',
-        'Ajouter les tomates coupées et cuire jusqu\'à ce qu\'elles soient tendres',
-        'Mélanger avec les pâtes cuites et servir'
+        'Boil pasta according to package directions',
+        'Heat oil in a pan and sauté garlic',
+        'Add diced tomatoes and cook until soft',
+        'Toss with cooked pasta and serve'
       ],
       nutrition: {
         calories: 320,
@@ -56,18 +56,18 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 2,
-      title: 'Salade de Jardin Fraîche',
-      description: 'Légumes croquants avec une vinaigrette légère',
+      title: 'Fresh Garden Salad',
+      description: 'Crisp vegetables with a light dressing',
       time: '10 min',
       servings: 1,
-      difficulty: 'Facile',
+      difficulty: 'Easy',
       rating: 4.3,
-      ingredients: ['laitue', 'tomate', 'concombre', 'carotte'],
+      ingredients: ['lettuce', 'tomato', 'cucumber', 'carrot'],
       instructions: [
-        'Laver et couper tous les légumes',
-        'Mélanger dans un grand bol',
-        'Ajouter votre vinaigrette préférée',
-        'Servir immédiatement'
+        'Wash and chop all vegetables',
+        'Mix in a large bowl',
+        'Add your favorite dressing',
+        'Serve immediately'
       ],
       nutrition: {
         calories: 120,
@@ -79,18 +79,18 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 3,
-      title: 'Omelette aux Légumes et Fromage',
-      description: 'Œufs moelleux avec fromage et légumes',
+      title: 'Cheesy Vegetable Omelet',
+      description: 'Fluffy eggs with cheese and vegetables',
       time: '12 min',
       servings: 1,
-      difficulty: 'Moyen',
+      difficulty: 'Medium',
       rating: 4.7,
-      ingredients: ['œuf', 'fromage', 'légumes', 'beurre'],
+      ingredients: ['egg', 'cheese', 'vegetables', 'butter'],
       instructions: [
-        'Battre les œufs dans un bol',
-        'Chauffer le beurre dans une poêle antiadhésive',
-        'Verser les œufs et laisser prendre légèrement',
-        'Ajouter fromage et légumes, plier l\'omelette'
+        'Beat eggs in a bowl',
+        'Heat butter in a non-stick pan',
+        'Pour eggs and let them set slightly',
+        'Add cheese and vegetables, fold omelet'
       ],
       nutrition: {
         calories: 280,
@@ -102,19 +102,19 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
     {
       id: 4,
-      title: 'Sauté de Poulet aux Légumes',
-      description: 'Repas riche en protéines avec légumes colorés',
+      title: 'Chicken Stir Fry',
+      description: 'Protein-packed meal with colorful vegetables',
       time: '20 min',
       servings: 2,
-      difficulty: 'Moyen',
+      difficulty: 'Medium',
       rating: 4.6,
-      ingredients: ['poulet', 'légumes', 'sauce soja', 'riz'],
+      ingredients: ['chicken', 'vegetables', 'soy sauce', 'rice'],
       instructions: [
-        'Couper le poulet en petits morceaux',
-        'Chauffer l\'huile dans un wok ou une grande poêle',
-        'Cuire le poulet jusqu\'à ce qu\'il soit doré',
-        'Ajouter les légumes et faire sauter',
-        'Assaisonner avec la sauce soja et servir sur du riz'
+        'Cut chicken into small pieces',
+        'Heat oil in a wok or large pan',
+        'Cook chicken until golden',
+        'Add vegetables and stir fry',
+        'Season with soy sauce and serve over rice'
       ],
       nutrition: {
         calories: 420,
@@ -126,13 +126,13 @@ function generateMockRecipes(ingredients: string[]): any[] {
     },
   ];
   
-  // Filtrer les recettes basées sur les ingrédients disponibles
+  // Filter recipes based on available ingredients
   const availableIngredients = ingredients.map(ing => ing.trim().toLowerCase());
   
   const matchingRecipes = recipeDatabase.filter(recipe => {
     const recipeIngredients = recipe.ingredients.map(ing => ing.toLowerCase());
     
-    // Vérifier si au moins 50% des ingrédients de la recette sont disponibles
+    // Check if at least 50% of recipe ingredients are available
     const matchCount = recipeIngredients.filter(ing => 
       availableIngredients.some(available => 
         available.includes(ing) || ing.includes(available)
@@ -142,7 +142,7 @@ function generateMockRecipes(ingredients: string[]): any[] {
     return matchCount >= Math.ceil(recipeIngredients.length * 0.5);
   });
   
-  // Trier par nombre d'ingrédients correspondants (décroissant)
+  // Sort by number of matching ingredients (descending)
   return matchingRecipes.sort((a, b) => {
     const aMatches = a.ingredients.filter(ing => 
       availableIngredients.some(available => 
@@ -158,4 +158,7 @@ function generateMockRecipes(ingredients: string[]): any[] {
     
     return bMatches - aMatches;
   });
+}
+
+/* Removed duplicate setLoading function, as setLoading is already defined by useState */
 }

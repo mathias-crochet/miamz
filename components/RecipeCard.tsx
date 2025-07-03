@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ImageSourcePropType } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Clock, Users, Star, Bookmark } from 'lucide-react-native';
+import { ImageBackground } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -12,7 +13,7 @@ interface Recipe {
   servings: number;
   rating: number;
   difficulty: string;
-  image: string;
+  image: ImageSourcePropType;
   isBookmarked?: boolean;
 }
 
@@ -25,21 +26,20 @@ interface RecipeCardProps {
 export default function RecipeCard({ recipe, onPress, onBookmark }: RecipeCardProps) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      <LinearGradient
-        colors={['#4ECDC4', '#44A08D']}
+      <ImageBackground
+        source={recipe.image}
         style={styles.imageContainer}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        imageStyle={{ resizeMode: 'cover' }}
       >
-        <TouchableOpacity style={styles.bookmarkButton} onPress={onBookmark}>
-          <Bookmark
-            size={20}
-            color={recipe.isBookmarked ? '#FF6B35' : '#FFFFFF'}
-            fill={recipe.isBookmarked ? '#FF6B35' : 'transparent'}
-            strokeWidth={2}
-          />
-        </TouchableOpacity>
-      </LinearGradient>
+    <TouchableOpacity style={styles.bookmarkButton} onPress={onBookmark}>
+      <Bookmark
+        size={20}
+        color={recipe.isBookmarked ? '#FF6B35' : '#FFFFFF'}
+        fill={recipe.isBookmarked ? '#FF6B35' : 'transparent'}
+        strokeWidth={2}
+        />
+      </TouchableOpacity>
+    </ImageBackground>
 
       <View style={styles.content}>
         <View style={styles.header}>
