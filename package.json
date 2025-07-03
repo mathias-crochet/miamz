@@ -5,8 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "expo start",
+    "build": "expo export --platform web",
     "build:web": "expo export --platform web",
-    "lint": "expo lint"
+    "start": "expo start --web",
+    "lint": "expo lint",
+    "vercel-build": "expo export --platform web"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
@@ -45,8 +48,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@expo/next-adapter": "^6.0.0",
     "@types/react": "~19.0.10",
     "metro": "^0.82.4",
+    "next": "^14.0.0",
     "typescript": "~5.8.3"
   }
 }

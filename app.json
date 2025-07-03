@@ -13,8 +13,13 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "server",
-      "favicon": "./assets/images/favicon.png"
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "build": {
+        "babel": {
+          "include": ["@expo/vector-icons"]
+        }
+      }
     },
     "plugins": ["expo-router", "expo-font", "expo-web-browser", "expo-camera"],
     "experiments": {
