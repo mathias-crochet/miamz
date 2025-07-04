@@ -44,6 +44,9 @@ const translations = {
   'camera.detected.question': 'Voulez-vous voir les suggestions de recettes ?',
   'camera.detected.later': 'Plus tard',
   'camera.detected.showRecipes': 'Voir les Recettes',
+  'camera.noFood.title': 'Aucun aliment détecté',
+  'camera.noFood.message': 'Nous n\'avons pas pu détecter d\'aliments dans cette image. Assurez-vous que les aliments sont bien visibles et éclairés.',
+  'camera.retake': 'Reprendre',
   'camera.error': 'Échec de l\'analyse de l\'image. Veuillez réessayer.',
   
   // Recipes Screen
@@ -94,6 +97,8 @@ const translations = {
   'profile.studyTip': '🎓 Cuisine Pause Étude',
   'profile.studyTip.text': 'Prends des pauses cuisine entre tes sessions d\'étude ! C\'est un excellent moyen de se détendre et de nourrir ton corps et ton esprit.',
   'profile.version': 'MIAMZ v1.0.0',
+  'profile.language': 'Langue',
+  'profile.language.desc': 'Français',
   
   // Common
   'common.loading': 'Chargement...',
