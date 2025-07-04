@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, RotateCcw, Zap, ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useLanguage } from '@/contexts/LanguageContext';
+import * as FileSystem from 'expo-file-system';
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -46,15 +47,79 @@ export default function CameraScreen() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
+  const analyzeImageWithVision = async (imageUri: string): Promise<string[]> => {
+    try {
+      // Convertir l'image en base64
+      const base64Image = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Appeler notre API route pour l'analyse Vision
+      const response = await fetch('/vision', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image,
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_VISION_API_KEY,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur API: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Erreur lors de l\'analyse');
+      }
+
+      return result.detectedItems || [];
+    } catch (error) {
+      console.error('Erreur lors de l\'analyse Vision:', error);
+      throw error;
+    }
+  };
+
   const takePicture = async () => {
     if (cameraRef.current && !isAnalyzing) {
       setIsAnalyzing(true);
       
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Prendre la photo
+        const photo = await cameraRef.current.takePictureAsync({
+          quality: 0.8,
+          base64: false,
+        });
+
+        if (!photo?.uri) {
+          throw new Error('Impossible de capturer l\'image');
+        }
+
+        // Analyser l'image avec Google Vision
+        const detectedItems = await analyzeImageWithVision(photo.uri);
         
-        const detectedItems = ['tomatoes', 'lettuce', 'cheese', 'bread'];
-        
+        if (detectedItems.length === 0) {
+          Alert.alert(
+            t('camera.noFood.title'),
+            t('camera.noFood.message'),
+            [
+              {
+                text: t('common.cancel'),
+                style: 'cancel',
+              },
+              {
+                text: t('camera.retake'),
+                onPress: () => console.log('Reprendre photo'),
+              },
+            ]
+          );
+          return;
+        }
+
+        // Afficher les résultats
         Alert.alert(
           t('camera.detected.title'),
           `${t('camera.detected.found')}: ${detectedItems.join(', ')}\n\n${t('camera.detected.question')}`,
@@ -65,12 +130,26 @@ export default function CameraScreen() {
             },
             {
               text: t('camera.detected.showRecipes'),
-              onPress: () => router.push('/recipes'),
+              onPress: () => {
+                // Naviguer vers les recettes avec les ingrédients détectés
+                router.push({
+                  pathname: '/recipes',
+                  params: { detectedIngredients: detectedItems.join(',') }
+                });
+              },
             },
           ]
         );
+
+        // Nettoyer le fichier temporaire
+        await FileSystem.deleteAsync(photo.uri, { idempotent: true });
+
       } catch (error) {
-        Alert.alert(t('common.error'), t('camera.error'));
+        console.error('Erreur lors de l\'analyse:', error);
+        Alert.alert(
+          t('common.error'), 
+          error instanceof Error ? error.message : t('camera.error')
+        );
       } finally {
         setIsAnalyzing(false);
       }

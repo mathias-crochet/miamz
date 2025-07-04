@@ -44,6 +44,9 @@ const translations = {
   'camera.detected.question': 'Voulez-vous voir les suggestions de recettes ?',
   'camera.detected.later': 'Plus tard',
   'camera.detected.showRecipes': 'Voir les Recettes',
+  'camera.noFood.title': 'Aucun aliment détecté',
+  'camera.noFood.message': 'Nous n\'avons pas pu détecter d\'aliments dans cette image. Assurez-vous que les aliments sont bien visibles et éclairés.',
+  'camera.retake': 'Reprendre',
   'camera.error': 'Échec de l\'analyse de l\'image. Veuillez réessayer.',
   
   // Recipes Screen
