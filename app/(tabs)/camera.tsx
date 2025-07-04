@@ -49,10 +49,22 @@ export default function CameraScreen() {
 
   const analyzeImageWithVision = async (imageUri: string): Promise<string[]> => {
     try {
+      console.log('Début de l\'analyse de l\'image:', imageUri);
+      
       // Convertir l'image en base64
       const base64Image = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
+
+      console.log('Image convertie en base64, taille:', base64Image.length);
+
+      // Vérifier que la clé API est disponible
+      const apiKey = process.env.EXPO_PUBLIC_GOOGLE_VISION_API_KEY;
+      if (!apiKey) {
+        throw new Error('Clé API Google Vision non configurée. Vérifiez votre fichier .env');
+      }
+
+      console.log('Clé API trouvée, appel de l\'API...');
 
       // Appeler notre API route pour l'analyse Vision
       const response = await fetch('/vision', {
@@ -62,20 +74,36 @@ export default function CameraScreen() {
         },
         body: JSON.stringify({
           image: base64Image,
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_VISION_API_KEY,
+          apiKey: apiKey,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Erreur API: ${response.status}`);
+      console.log('Réponse reçue:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
+      const responseText = await response.text();
+      console.log('Contenu de la réponse:', responseText);
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Erreur de parsing JSON:', parseError);
+        throw new Error(`Réponse invalide du serveur: ${responseText}`);
       }
 
-      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || `Erreur HTTP ${response.status}: ${response.statusText}`);
+      }
       
       if (!result.success) {
         throw new Error(result.error || 'Erreur lors de l\'analyse');
       }
 
+      console.log('Analyse réussie, aliments détectés:', result.detectedItems);
       return result.detectedItems || [];
     } catch (error) {
       console.error('Erreur lors de l\'analyse Vision:', error);
@@ -88,6 +116,8 @@ export default function CameraScreen() {
       setIsAnalyzing(true);
       
       try {
+        console.log('Prise de photo...');
+        
         // Prendre la photo
         const photo = await cameraRef.current.takePictureAsync({
           quality: 0.8,
@@ -97,6 +127,8 @@ export default function CameraScreen() {
         if (!photo?.uri) {
           throw new Error('Impossible de capturer l\'image');
         }
+
+        console.log('Photo prise:', photo.uri);
 
         // Analyser l'image avec Google Vision
         const detectedItems = await analyzeImageWithVision(photo.uri);
@@ -146,10 +178,23 @@ export default function CameraScreen() {
 
       } catch (error) {
         console.error('Erreur lors de l\'analyse:', error);
-        Alert.alert(
-          t('common.error'), 
-          error instanceof Error ? error.message : t('camera.error')
-        );
+        
+        let errorMessage = t('camera.error');
+        if (error instanceof Error) {
+          if (error.message.includes('clé API')) {
+            errorMessage = 'Clé API Google Vision non configurée. Vérifiez votre configuration.';
+          } else if (error.message.includes('HTTP 400')) {
+            errorMessage = 'Clé API invalide ou requête malformée.';
+          } else if (error.message.includes('HTTP 403')) {
+            errorMessage = 'Accès refusé. Vérifiez que l\'API Vision est activée et que votre clé API a les bonnes permissions.';
+          } else if (error.message.includes('HTTP 429')) {
+            errorMessage = 'Quota d\'API dépassé. Veuillez réessayer plus tard.';
+          } else {
+            errorMessage = error.message;
+          }
+        }
+        
+        Alert.alert(t('common.error'), errorMessage);
       } finally {
         setIsAnalyzing(false);
       }

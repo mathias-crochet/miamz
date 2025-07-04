@@ -52,9 +52,19 @@ EXPO_PUBLIC_GOOGLE_VISION_API_KEY=votre_cle_api_google_vision
 
 1. Allez sur [Google Cloud Console](https://console.cloud.google.com/)
 2. Créez un nouveau projet ou sélectionnez un projet existant
-3. Activez l'API Vision AI
-4. Créez des identifiants (clé API)
-5. Copiez la clé API dans votre fichier `.env`
+3. Activez l'API Vision AI :
+   - Dans le menu de navigation, allez à "APIs & Services" > "Library"
+   - Recherchez "Vision AI" et cliquez sur "Cloud Vision API"
+   - Cliquez sur "Enable"
+4. Créez des identifiants (clé API) :
+   - Allez à "APIs & Services" > "Credentials"
+   - Cliquez sur "Create Credentials" > "API Key"
+   - Copiez la clé API générée
+5. (Optionnel) Restreignez la clé API :
+   - Cliquez sur la clé API créée
+   - Sous "API restrictions", sélectionnez "Restrict key"
+   - Choisissez "Cloud Vision API"
+6. Copiez la clé API dans votre fichier `.env`
 
 ### Démarrage
 
@@ -104,6 +114,7 @@ Analyse une image avec Google Vision API pour détecter les aliments.
 {
   "success": true,
   "detectedItems": ["tomate", "laitue", "fromage"],
+  "totalDetections": 3,
   "rawData": { ... }
 }
 ```
@@ -113,6 +124,36 @@ Récupère des recettes basées sur les ingrédients fournis.
 
 **Paramètres :**
 - `ingredients` : Liste d'ingrédients séparés par des virgules
+
+## Résolution des Problèmes
+
+### Erreur 500 lors de l'analyse d'image
+
+1. **Vérifiez votre clé API** :
+   - Assurez-vous que la clé API est correctement configurée dans `.env`
+   - Vérifiez que l'API Vision AI est activée dans Google Cloud Console
+
+2. **Vérifiez les permissions** :
+   - La clé API doit avoir accès à l'API Vision AI
+   - Vérifiez les restrictions de la clé API
+
+3. **Vérifiez les quotas** :
+   - Consultez la console Google Cloud pour voir si vous avez atteint les limites de quota
+
+4. **Logs de débogage** :
+   - Ouvrez la console du navigateur pour voir les logs détaillés
+   - Les erreurs spécifiques sont affichées dans la console
+
+### Erreur "Aucun aliment détecté"
+
+1. **Qualité de l'image** :
+   - Assurez-vous que l'éclairage est suffisant
+   - Les aliments doivent être clairement visibles
+   - Évitez les images floues
+
+2. **Seuil de confiance** :
+   - Le seuil est fixé à 0.3 (30% de confiance)
+   - Vous pouvez l'ajuster dans `vision+api.ts`
 
 ## Développement
 
@@ -127,6 +168,14 @@ Récupère des recettes basées sur les ingrédients fournis.
 1. **Nouveaux écrans** : Ajoutez des fichiers dans le dossier `app/`
 2. **Composants** : Créez des composants réutilisables dans `components/`
 3. **API Routes** : Ajoutez des routes API avec le suffixe `+api.ts`
+
+### Débogage
+
+Pour activer les logs détaillés, ouvrez la console du navigateur. L'application affiche :
+- Les étapes de traitement de l'image
+- Les réponses de l'API Google Vision
+- Les aliments détectés et leur score de confiance
+- Les erreurs détaillées
 
 ## Déploiement
 
@@ -156,3 +205,10 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 ## Support
 
 Pour toute question ou problème, veuillez ouvrir une issue sur GitHub ou contacter l'équipe de développement.
+
+### Problèmes Courants
+
+- **Erreur 403** : Vérifiez que l'API Vision AI est activée et que votre clé API a les bonnes permissions
+- **Erreur 429** : Quota d'API dépassé, attendez ou augmentez votre quota
+- **Erreur 400** : Clé API invalide ou requête malformée
+- **Pas de détection** : Améliorez l'éclairage et la qualité de l'image
