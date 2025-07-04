@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Dimensions, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Search, Clock, Users, Star, Bookmark, Filter, X, ChefHat, Plus } from 'lucide-react-native';
+import { Search, Clock, Users, Star, Bookmark, ListFilter as Filter, X, ChefHat, Plus } from 'lucide-react-native';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocalSearchParams } from 'expo-router';
 import { recipeDatabase, findRecipesByIngredients, getRecipesByCategory, searchRecipes, Recipe } from '@/data/recipes';
