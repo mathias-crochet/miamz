@@ -1,39 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Dimensions, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Search, Clock, Users, Star, Bookmark, Filter, X, ChefHat } from 'lucide-react-native';
+import { Search, Clock, Users, Star, Bookmark, Filter, X, ChefHat, Plus } from 'lucide-react-native';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocalSearchParams } from 'expo-router';
+import { recipeDatabase, findRecipesByIngredients, getRecipesByCategory, searchRecipes, Recipe } from '@/data/recipes';
 
 const { width } = Dimensions.get('window');
-
-interface Recipe {
-  id: number;
-  title: string;
-  description: string;
-  time: string;
-  servings: number;
-  difficulty: string;
-  rating: number;
-  category: string;
-  ingredients: string[];
-  instructions: string[];
-  nutrition: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-  image: string;
-  isBookmarked: boolean;
-}
 
 export default function RecipesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [recipes, setRecipes] = useState<Recipe[]>(recipeDatabase);
+  const [showAddRecipeForm, setShowAddRecipeForm] = useState(false);
   const { t } = useLanguage();
+  const params = useLocalSearchParams();
+
+  // Gérer les ingrédients détectés depuis la caméra
+  useEffect(() => {
+    if (params.detectedIngredients) {
+      const ingredients = (params.detectedIngredients as string).split(',');
+      const matchingRecipes = findRecipesByIngredients(ingredients);
+      setRecipes(matchingRecipes);
+      setSearchQuery(`Recettes avec: ${ingredients.join(', ')}`);
+    }
+  }, [params.detectedIngredients]);
 
   const categories = [
     { key: 'All', label: t('recipes.categories.all') },
@@ -45,128 +39,31 @@ export default function RecipesScreen() {
     { key: 'Vegetarian', label: t('recipes.categories.vegetarian') },
   ];
 
-  const recipes: Recipe[] = [
-    {
-      id: 1,
-      title: 'Pâtes Carbonara Rapides',
-      description: 'Pâtes crémeuses aux œufs, fromage et lardons',
-      time: '15 min',
-      servings: 2,
-      difficulty: t('recipes.difficulty.easy'),
-      rating: 4.8,
-      category: 'Quick',
-      ingredients: ['200g de pâtes', '2 œufs', '100g de parmesan', '100g de lardons', 'poivre noir', 'sel'],
-      instructions: [
-        'Faire bouillir les pâtes selon les instructions',
-        'Cuire les lardons jusqu\'à ce qu\'ils soient croustillants',
-        'Battre les œufs avec le fromage et le poivre',
-        'Égoutter les pâtes, mélanger avec la graisse des lardons',
-        'Ajouter le mélange d\'œufs hors du feu, mélanger rapidement',
-        'Servir immédiatement avec du fromage supplémentaire'
-      ],
-      nutrition: {
-        calories: 520,
-        protein: 28,
-        carbs: 45,
-        fat: 24
-      },
-      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
-      isBookmarked: true,
-    },
-    {
-      id: 2,
-      title: 'Sauté de Légumes',
-      description: 'Légumes colorés à la sauce soja',
-      time: '12 min',
-      servings: 3,
-      difficulty: t('recipes.difficulty.easy'),
-      rating: 4.6,
-      category: 'Vegetarian',
-      ingredients: ['200g de brocolis', '1 carotte', '1 poivron', '2 c. à soupe de sauce soja', '1 c. à soupe d\'huile', 'ail'],
-      instructions: [
-        'Chauffer l\'huile dans une grande poêle ou wok',
-        'Ajouter l\'ail et cuire 30 secondes',
-        'Ajouter d\'abord les légumes plus durs (carottes)',
-        'Ajouter les légumes plus tendres (brocolis, poivrons)',
-        'Faire sauter 5-7 minutes jusqu\'à ce qu\'ils soient tendres-croquants',
-        'Ajouter la sauce soja et mélanger'
-      ],
-      nutrition: {
-        calories: 180,
-        protein: 8,
-        carbs: 25,
-        fat: 6
-      },
-      image: 'https://images.pexels.com/photos/2741452/pexels-photo-2741452.jpeg?auto=compress&cs=tinysrgb&w=400',
-      isBookmarked: false,
-    },
-    {
-      id: 3,
-      title: 'Toast à l\'Avocat',
-      description: 'Petit-déjeuner simple et nutritif',
-      time: '5 min',
-      servings: 1,
-      difficulty: t('recipes.difficulty.easy'),
-      rating: 4.5,
-      category: 'Breakfast',
-      ingredients: ['2 tranches de pain', '1 avocat mûr', '1 tomate', 'jus de citron', 'sel', 'poivre'],
-      instructions: [
-        'Griller le pain jusqu\'à ce qu\'il soit doré',
-        'Écraser l\'avocat avec le jus de citron',
-        'Assaisonner avec sel et poivre',
-        'Étaler l\'avocat sur le toast',
-        'Garnir de tranches de tomate',
-        'Ajouter l\'assaisonnement final au goût'
-      ],
-      nutrition: {
-        calories: 320,
-        protein: 8,
-        carbs: 35,
-        fat: 18
-      },
-      image: 'https://images.pexels.com/photos/566566/pexels-photo-566566.jpeg?auto=compress&cs=tinysrgb&w=400',
-      isBookmarked: false,
-    },
-    {
-      id: 4,
-      title: 'Bol de Riz au Poulet',
-      description: 'Repas riche en protéines avec légumes',
-      time: '25 min',
-      servings: 2,
-      difficulty: t('recipes.difficulty.medium'),
-      rating: 4.7,
-      category: 'Lunch',
-      ingredients: ['300g de blanc de poulet', '1 tasse de riz', '100g de brocolis', '1 carotte', 'sauce teriyaki', 'graines de sésame'],
-      instructions: [
-        'Cuire le riz selon les instructions',
-        'Assaisonner et cuire le poulet jusqu\'à ce qu\'il soit doré',
-        'Cuire les légumes à la vapeur jusqu\'à ce qu\'ils soient tendres',
-        'Couper le poulet en lamelles',
-        'Assembler les bols avec riz, poulet, légumes',
-        'Arroser de sauce teriyaki et saupoudrer de graines de sésame'
-      ],
-      nutrition: {
-        calories: 450,
-        protein: 35,
-        carbs: 48,
-        fat: 12
-      },
-      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
-      isBookmarked: true,
-    },
-  ];
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim() === '') {
+      setRecipes(getRecipesByCategory(selectedCategory));
+    } else {
+      const searchResults = searchRecipes(query);
+      setRecipes(searchResults);
+    }
+  };
 
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         recipe.ingredients.some(ingredient => 
-                           ingredient.toLowerCase().includes(searchQuery.toLowerCase())
-                         );
-    const matchesCategory = selectedCategory === 'All' || recipe.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    if (searchQuery.trim() === '') {
+      setRecipes(getRecipesByCategory(category));
+    }
+  };
 
   const toggleBookmark = (recipeId: number) => {
-    console.log('Toggle bookmark for recipe:', recipeId);
+    setRecipes(prevRecipes => 
+      prevRecipes.map(recipe => 
+        recipe.id === recipeId 
+          ? { ...recipe, isBookmarked: !recipe.isBookmarked }
+          : recipe
+      )
+    );
   };
 
   const openRecipeModal = (recipe: Recipe) => {
@@ -183,8 +80,18 @@ export default function RecipesScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('recipes.title')}</Text>
-        <Text style={styles.headerSubtitle}>{t('recipes.subtitle')}</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>{t('recipes.title')}</Text>
+            <Text style={styles.headerSubtitle}>{t('recipes.subtitle')}</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => setShowAddRecipeForm(true)}
+          >
+            <Plus size={24} color="#FFFFFF" strokeWidth={2} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -195,7 +102,7 @@ export default function RecipesScreen() {
             style={styles.searchInput}
             placeholder={t('recipes.search')}
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={handleSearch}
             placeholderTextColor="#BDC3C7"
           />
         </View>
@@ -213,7 +120,7 @@ export default function RecipesScreen() {
               styles.categoryButton,
               selectedCategory === category.key && styles.categoryButtonActive
             ]}
-            onPress={() => setSelectedCategory(category.key)}
+            onPress={() => handleCategoryChange(category.key)}
           >
             <Text style={[
               styles.categoryText,
@@ -225,33 +132,35 @@ export default function RecipesScreen() {
         ))}
       </ScrollView>
 
+      {/* Recipe Count */}
+      <View style={styles.recipeCount}>
+        <Text style={styles.recipeCountText}>
+          {recipes.length} {recipes.length === 1 ? 'recette trouvée' : 'recettes trouvées'}
+        </Text>
+      </View>
+
       {/* Recipes List */}
       <ScrollView showsVerticalScrollIndicator={false} style={styles.recipesContainer}>
-        {filteredRecipes.map((recipe) => (
+        {recipes.map((recipe) => (
           <TouchableOpacity 
             key={recipe.id} 
             style={styles.recipeCard} 
             activeOpacity={0.8}
             onPress={() => openRecipeModal(recipe)}
           >
-            <LinearGradient
-              colors={['#2a8540', '#1e6b32']}
-              style={styles.recipeImageContainer}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+            <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+
+            <TouchableOpacity
+              style={styles.bookmarkButton}
+              onPress={() => toggleBookmark(recipe.id)}
             >
-              <TouchableOpacity
-                style={styles.bookmarkButton}
-                onPress={() => toggleBookmark(recipe.id)}
-              >
-                <Bookmark
-                  size={20}
-                  color={recipe.isBookmarked ? '#2a8540' : '#FFFFFF'}
-                  fill={recipe.isBookmarked ? '#2a8540' : 'transparent'}
-                  strokeWidth={2}
-                />
-              </TouchableOpacity>
-            </LinearGradient>
+              <Bookmark
+                size={20}
+                color={recipe.isBookmarked ? '#2a8540' : '#FFFFFF'}
+                fill={recipe.isBookmarked ? '#2a8540' : 'transparent'}
+                strokeWidth={2}
+              />
+            </TouchableOpacity>
 
             <View style={styles.recipeContent}>
               <View style={styles.recipeHeader}>
@@ -276,9 +185,9 @@ export default function RecipesScreen() {
                   </View>
                 </View>
                 <View style={[styles.difficultyBadge, 
-                  recipe.difficulty === t('recipes.difficulty.easy') && styles.difficultyEasy,
-                  recipe.difficulty === t('recipes.difficulty.medium') && styles.difficultyMedium,
-                  recipe.difficulty === t('recipes.difficulty.hard') && styles.difficultyHard
+                  recipe.difficulty === 'Facile' && styles.difficultyEasy,
+                  recipe.difficulty === 'Moyen' && styles.difficultyMedium,
+                  recipe.difficulty === 'Difficile' && styles.difficultyHard
                 ]}>
                   <Text style={styles.difficultyText}>{recipe.difficulty}</Text>
                 </View>
@@ -291,11 +200,20 @@ export default function RecipesScreen() {
                   {recipe.ingredients.length > 3 && '...'}
                 </Text>
               </View>
+
+              {/* Tags */}
+              <View style={styles.tagsContainer}>
+                {recipe.tags.slice(0, 3).map((tag, index) => (
+                  <View key={index} style={styles.tag}>
+                    <Text style={styles.tagText}>#{tag}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </TouchableOpacity>
         ))}
 
-        {filteredRecipes.length === 0 && (
+        {recipes.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>{t('recipes.noResults')}</Text>
             <Text style={styles.emptyStateSubtext}>
@@ -351,6 +269,18 @@ export default function RecipesScreen() {
                     <View style={styles.modalStatItem}>
                       <ChefHat size={16} color="#2a8540" strokeWidth={2} />
                       <Text style={styles.modalStatText}>{selectedRecipe.difficulty}</Text>
+                    </View>
+                  </View>
+
+                  {/* Cuisine & Tags */}
+                  <View style={styles.cuisineSection}>
+                    <Text style={styles.cuisineLabel}>Cuisine: <Text style={styles.cuisineText}>{selectedRecipe.cuisine}</Text></Text>
+                    <View style={styles.modalTagsContainer}>
+                      {selectedRecipe.tags.map((tag, index) => (
+                        <View key={index} style={styles.modalTag}>
+                          <Text style={styles.modalTagText}>#{tag}</Text>
+                        </View>
+                      ))}
                     </View>
                   </View>
 
@@ -419,6 +349,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 24,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
   headerTitle: {
     fontSize: 28,
     color: '#2C3E50',
@@ -427,6 +362,22 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 16,
     color: '#7F8C8D',
+  },
+  addButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#2a8540',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -475,7 +426,7 @@ const styles = StyleSheet.create({
   },
   categoriesContainer: {
     paddingHorizontal: 24,
-    marginBottom: 20,
+    marginBottom: 16,
     maxHeight: 50,
   },
   categoryButton: {
@@ -500,6 +451,15 @@ const styles = StyleSheet.create({
   categoryTextActive: {
     color: '#FFFFFF',
   },
+  recipeCount: {
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  recipeCountText: {
+    fontSize: 14,
+    color: '#7F8C8D',
+    fontStyle: 'italic',
+  },
   recipesContainer: {
     flex: 1,
     paddingHorizontal: 24,
@@ -517,20 +477,24 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     overflow: 'hidden',
+    position: 'relative',
   },
-  recipeImageContainer: {
+  recipeImage: {
+    width: '100%',
     height: 120,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    padding: 12,
+    backgroundColor: '#E5E7EB',
   },
   bookmarkButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
     width: 36,
     height: 36,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   recipeContent: {
     padding: 20,
@@ -603,6 +567,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
     paddingTop: 16,
+    marginBottom: 12,
   },
   ingredientsLabel: {
     fontSize: 14,
@@ -613,6 +578,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7F8C8D',
     lineHeight: 18,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tag: {
+    backgroundColor: '#F8F9FA',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 4,
+  },
+  tagText: {
+    fontSize: 12,
+    color: '#6C757D',
   },
   emptyState: {
     alignItems: 'center',
@@ -704,6 +685,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2C3E50',
     marginTop: 4,
+  },
+  cuisineSection: {
+    marginBottom: 24,
+  },
+  cuisineLabel: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    marginBottom: 12,
+  },
+  cuisineText: {
+    color: '#2a8540',
+    fontWeight: 'bold',
+  },
+  modalTagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  modalTag: {
+    backgroundColor: '#d5f3dc',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  modalTagText: {
+    fontSize: 12,
+    color: '#2a8540',
   },
   nutritionSection: {
     marginBottom: 24,
